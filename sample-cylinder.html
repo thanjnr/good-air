@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        // You have to create a function called createScene. This function must return a BABYLON.Scene object
+        // You can reference the following variables: scene, canvas
+        // You must at least define a camera
+        // More info here: https://github.com/BabylonJS/Babylon.js/wiki/The-Playground
+        
+        var createScene = function() {
+        	var scene = new BABYLON.Scene(engine);
+        	var camera = new BABYLON.ArcRotateCamera("Camera", 2 * Math.PI / 2, Math.PI / 2, 70, BABYLON.Vector3.Zero(), scene);
+        	
+        	camera.lowerRadiusLimit = 10;
+        	camera.upperRadiusLimit = 70;
+        	camera.attachControl(canvas, false);
+        	
+        	camera.keysUp = [];
+        	camera.keysDown = [];
+        	camera.keysLeft = [];
+        	camera.keysRight = [];
+        	
+        	var hemisphereLight1 = new BABYLON.HemisphericLight("hemisphereLight1", new BABYLON.Vector3(0,25,0), scene); //Lichter
+        	var hemisphereLight2 = new BABYLON.HemisphericLight("hemisphereLight2", new BABYLON.Vector3(0,-25,0), scene);
+        	var pointLight1 = new BABYLON.PointLight("pointLight1", new BABYLON.Vector3(-35,15,-10), scene);
+        	hemisphereLight1.intensity = 1;
+        	hemisphereLight2.intensity = 1;
+        	pointLight1.intensity = .5;
+        	
+        	var transparentMaterial = new BABYLON.StandardMaterial("transparentMaterial", scene);
+        	transparentMaterial.diffuseColor = new BABYLON.Color3(.5, .5, .5);
+        	transparentMaterial.emissiveColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+        	transparentMaterial.alpha = 0.01;
+        	transparentMaterial.specularPower = 16;
+        	
+        	transparentMaterial.reflectionFresnelParameters = new BABYLON.FresnelParameters();
+        	transparentMaterial.reflectionFresnelParameters.bias = 0.05;
+        	
+        	transparentMaterial.emissiveFresnelParameters = new BABYLON.FresnelParameters();
+        	transparentMaterial.emissiveFresnelParameters.bias = 0.3;
+        	transparentMaterial.emissiveFresnelParameters.power = 2;
+        	transparentMaterial.emissiveFresnelParameters.leftColor = BABYLON.Color3.White();
+        	transparentMaterial.emissiveFresnelParameters.rightColor = BABYLON.Color3.Black();
+        	
+        	transparentMaterial.opacityFresnelParameters = new BABYLON.FresnelParameters();
+        	transparentMaterial.opacityFresnelParameters.leftColor = BABYLON.Color3.White();
+        	transparentMaterial.opacityFresnelParameters.rightColor = BABYLON.Color3.Black();
+        	
+        	var foregroundMaterial = new BABYLON.StandardMaterial("foregroundMat", scene);
+        	foregroundMaterial.diffuseTexture = new BABYLON.Texture("http://i725.photobucket.com/albums/ww255/Toushin/Foreground_zpsskfkts3l.png", scene);
+        	foregroundMaterial.diffuseTexture.hasAlpha = true;
+        	foregroundMaterial.opacityTexture = foregroundMaterial.diffuseTexture;
+        	
+        	var backgroundMaterial = new BABYLON.StandardMaterial("backgroundMat", scene);
+        	backgroundMaterial.diffuseTexture = new BABYLON.Texture("http://i725.photobucket.com/albums/ww255/Toushin/background_zpsmnkep3ya.jpg", scene);
+        	
+        	var baseMat = new BABYLON.StandardMaterial("baseMat", scene);
+        	baseMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+        	
+        	var cylTess = 30;
+        
+        	var glass = BABYLON.Mesh.CreateCylinder("glass", 29, 16.6, 14, cylTess, 1, scene, true);
+        	var base = BABYLON.Mesh.CreateCylinder("base", 2.4, 14, 13.4, cylTess, 1, scene, true);
+        	var top = BABYLON.Mesh.CreateCylinder("top", 3.5, 15, 16.6, cylTess, 1, scene, true);
+        	var background = BABYLON.Mesh.CreateCylinder("background", 29, 15.8, 13.2, cylTess, 1, scene, true);
+        	var foreground = BABYLON.Mesh.CreateCylinder("foreground", 29, 15.9, 13.3, cylTess, 1, scene, true);
+        		
+        	foreground.alphaIndex = 0;
+        		
+        	glass.material = transparentMaterial;
+        	base.material = baseMat;
+        	top.material = baseMat;
+        	background.material = backgroundMaterial;
+        	foreground.material = foregroundMaterial;
+        	
+        	//glass.renderingGroupId = 1;
+        	
+        	base.position.y = -15.7;
+        	top.position.y = 16.25;
+        	
+        	return scene;
+        };
+        
+        var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>

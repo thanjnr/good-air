@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://unpkg.com/merge-images"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <div style="display: none;">
+        <canvas id="generateCanvas"></canvas>
+    </div>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var createScene = function () {
+        
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+            
+            scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+            // This creates and positions a free camera (non-mesh)
+            /* var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", -1*Math.PI/2, 0, 5, BABYLON.Vector3.Zero(), scene);
+        
+            camera.setPosition(new BABYLON.Vector3(0, 0, -10));
+        
+           // This targets the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+        
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true); */
+            
+            // var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", -1*Math.PI/2, 0, 5, BABYLON.Vector3.Zero(), scene);
+            var camera = new BABYLON.ArcRotateCamera("Camera", 5 * Math.PI / 8,  7 * Math.PI / 16, 3, BABYLON.Vector3.Zero(), scene);
+            
+            //camera.setPosition(new BABYLON.Vector3(0, 0, -1));
+            
+            // This targets the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+        
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
+        
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            var light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, -1), scene);       
+            var light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), scene);
+            light.diffuse = new BABYLON.Color3(0.8, 0.8, 0.8);
+            light.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
+            light.groundColor = new BABYLON.Color3(1, 1, 1);
+            // var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(-1, 10, -5), scene);     
+            // var light = new BABYLON.HemisphericLight();
+
+            scene.activeCamera.alpha = 0.8;
+
+//scene.lights[0].dispose();
+/* var light = new BABYLON.DirectionalLight("light1", new BABYLON.Vector3(-2, -6, -2), scene);
+light.position = new BABYLON.Vector3(20, 60, 20);
+light.shadowMinZ = 30;
+light.shadowMaxZ = 180;
+light.intensity = 5; */
+
+/* var generator = new BABYLON.ShadowGenerator(512, light);
+generator.useContactHardeningShadow = true;
+generator.bias = 0.01;
+generator.normalBias= 0.05;
+generator.contactHardeningLightSizeUVRatio = 0.08; */
+
+        	
+        	var textureWidth = 1024;
+        	var textureHeight = 1024;
+        
+            // Default intensity is 1. Let's dim the light a small amount
+            //light.intensity = 0.7;
+
+            var skull;
+            var skullMaterial = new BABYLON.StandardMaterial("skullmat", scene);
+            skullMaterial.backFaceCulling = false;            
+            skullMaterial.alpha = 0;
+            
+            var transparentMaterial = new BABYLON.StandardMaterial("transparentMat", scene);
+            transparentMaterial.backFaceCulling = false;            
+            transparentMaterial.alpha = 0.5;
+            
+            var hiddenMaterial = new BABYLON.StandardMaterial("hiddenMat", scene);
+            hiddenMaterial.backFaceCulling = false;            
+            hiddenMaterial.alpha = 0;
+
+            // The first parameter can be used to specify which mesh to import. Here we import all meshes
+            BABYLON.SceneLoader.ImportMesh("", "/scenes/", "Spraycan.babylon", scene, function (newMeshes) {
+                console.log(newMeshes);
+                for(let i = 0; i < newMeshes.length; i++) { 
+                    // i = 0 can top
+                    // i = 1 can nozzle
+                    // i = 2 can inner lid
+                    // i = 3 can nozzle tip
+                    // i = 4 can outer lid
+                    if (i === 3) {                        
+                        newMeshes[i].material = hiddenMaterial; 
+                    }
+                    if (i === 4 || i === 1) {                        
+                       // newMeshes[i].material = transparentMaterial; 
+                    }
+                    newMeshes[i].scaling.x = 0.5;                
+                    newMeshes[i].scaling.y = 0.415;                
+                    newMeshes[i].scaling.z = 0.5;
+                    newMeshes[i].position.y = 0.95;
+                    //newMeshes[i].material = skullMaterial; 
+                    //newMeshes[i].diffuseColor.copyFrom({ r:255, g:0, b:0 }); 
+                }
+                skull = newMeshes[0];
+                console.log(skull);
+                // Set the target of the camera to the first imported mesh
+                //camera.target = skull;
+
+                // Add a material to skull
+                //skull.material = skullMaterial;
+            });
+                        
+        
+            var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+            backgroundTexture.wAng = BABYLON.Tools.ToRadians(270)/backgroundTexture.uScale;
+            backgroundTexture.clearColor = new BABYLON.Color4(1,0,0,0);  
+        
+            backgroundTexture.drawText("Enter custom text", 250, 250, "bold 70px Arial", "white", null, true);
+        
+            var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
+            console.log(dynamicMaterial);
+            dynamicMaterial.diffuseTexture = backgroundTexture;
+            dynamicMaterial.opacityTexture = backgroundTexture;
+            dynamicMaterial.diffuseTexture.invertZ = true;
+            // dynamicMaterial.diffuseTexture.vAng = 1;
+            // dynamicMaterial.diffuseTexture.wAng = BABYLON.Tools.ToRadians(90)/backgroundTexture.uScale;
+            // dynamicMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            dynamicMaterial.clearColor = new BABYLON.Color4(1,0,0,0); 
+            dynamicMaterial.backFaceCulling = false;
+
+        	var canMaterial = new BABYLON.StandardMaterial("material", scene);
+        	canMaterial.diffuseTexture = new BABYLON.Texture("good_air_can_large.png", scene)
+        	
+        	var faceUV = [
+                new BABYLON.Vector4(0, 0, 0, 0),
+                new BABYLON.Vector4(1, 0, 0, 1), 
+                new BABYLON.Vector4(0, 0, 0, 0)
+            ];   
+        
+            var faceColors = [new BABYLON.Color4(0.5, 0.5, 0.5, 1)];
+        	
+        	var innerCylinder =  BABYLON.MeshBuilder.CreateCylinder("can", {height:2.60, faceUV: faceUV, faceColors: faceColors}, scene);
+        	innerCylinder.material = canMaterial;
+
+            var outerCylinder = innerCylinder.clone('outer');
+            outerCylinder.material = dynamicMaterial; 
+
+
+
+            // GUI
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            
+            var panel = new BABYLON.GUI.StackPanel();
+            panel.width = "200px";
+            panel.isVertical = true;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            advancedTexture.addControl(panel);
+
+             var textBlock = new BABYLON.GUI.TextBlock();
+            textBlock.text = "Diffuse color:";
+            textBlock.height = "30px";
+            panel.addControl(textBlock);
+
+            var picker = new BABYLON.GUI.ColorPicker();
+            picker.value = skullMaterial.diffuseColor;
+            picker.height = "150px";
+            picker.width = "150px";
+            picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            picker.onValueChangedObservable.add(function (value) { // value is a color3
+                dynamicMaterial.diffuseColor.copyFrom(value);
+            });
+
+            var input = new BABYLON.GUI.InputText();
+            input.width = 1;
+            input.maxWidth = 1;
+            input.height = "40px";
+            input.text = "Enter custom text";
+            input.color = "white";
+            input.background = "green";
+            
+            input.onTextChangedObservable.add(function (value) { // value is a color3    
+                backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+                backgroundTexture.wAng = BABYLON.Tools.ToRadians(270)/backgroundTexture.uScale;
+                backgroundTexture.clearColor = new BABYLON.Color4(1,0,0,0);    
+                backgroundTexture.drawText(value.text, 250, 250, "bold 70px Arial", "white", null, true);
+            
+                dynamicMaterial.diffuseTexture = backgroundTexture;
+                dynamicMaterial.opacityTexture = backgroundTexture;
+
+                outerCylinder.material = dynamicMaterial; 
+            });
+            panel.addControl(input);
+            panel.addControl(picker);
+
+            var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Download");
+            button.width = 1;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "green";
+
+            button.onPointerClickObservable.add(function (evt) {
+                var tempImage = new Image;
+                tempImage.src = backgroundTexture.getContext().canvas.toDataURL("image/png");
+
+                tempImage.onload = function () {
+                    var tempCanvas = document.getElementById("generateCanvas");
+                    tempCanvas.width = 793;
+                    tempCanvas.height = 960;
+                    tempCanvas.getContext("2d").translate(793, 793 / 793);
+                    tempCanvas.getContext("2d").rotate(Math.PI / 2);
+                    //tempCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+
+                    tempCanvas.getContext("2d").translate(960, 793 / 960);
+                    tempCanvas.getContext("2d").rotate(Math.PI / 2);
+                    //tempCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+
+                    tempCanvas.getContext("2d").translate(793, 960 / 793);
+                    tempCanvas.getContext("2d").rotate(Math.PI / 2);
+                    tempCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+                    
+                    var imageurl = tempCanvas.toDataURL("image/png");                
+                    
+                    //Creating a link if the browser have the download attribute on the a tag, to automatically start download generated image.
+                    if("download" in document.createElement("a")) {
+                        var a = window.document.createElement("a");
+                        mergeImages(['/good_air_can_large.png', imageurl])
+                            .then((b64) => {
+                                console.log(b64);
+                                a.href = b64
+                                a.setAttribute("download", "dynamictexture.png");
+
+                                window.document.body.appendChild(a);
+
+                                a.addEventListener("click", function() {
+                                    a.parentElement.removeChild(a);
+                                });
+                                a.click();
+                            });                    
+
+                    //Or opening a new tab with the image if it is not possible to automatically start download.
+                    } else {
+                        var newWindow = window.open("");
+                        var img = newWindow.document.createElement("img");
+                        img.src = imageurl;
+                        newWindow.document.body.appendChild(img);
+                    }
+                }
+
+                /// rotate canvas context
+                // tempCtx.rotate(0.5 * Math.PI); /// 90deg clock-wise
+               
+            });
+            panel.addControl(button);        
+        
+            return scene;
+        
+        };
+        
+        var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>

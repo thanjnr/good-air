@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>Babylon.js sample code</title>
+
+    <!-- Babylon.js -->
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+
+            //Adding a light
+            var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 20, 100), scene);
+
+            //Adding an Arc Rotate Camera
+            var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 20, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, false);
+
+            var size = {
+                w: 340,
+                h: 12
+            }
+            var skull;
+            var skullMaterial = new BABYLON.StandardMaterial("skullmat", scene);
+
+            // The first parameter can be used to specify which mesh to import. Here we import all meshes
+            BABYLON.SceneLoader.ImportMesh("", "/scenes/", "Spraycan.babylon", scene, function (newMeshes) {
+                console.log(newMeshes);
+                skull = newMeshes[0];
+                /* for(let i = 0; i < newMeshes.length; i++) {                    
+                    newMeshes[i].position.y = i;
+                } */
+                // Set the target of the camera to the first imported mesh
+                camera.target = skull;
+
+                // Add a material to skull
+                skull.material = skullMaterial;
+                var size = skull.getBoundingInfo().boundingBox.extendSize;
+                var diameter = size.scale(2);
+                console.log(size);
+                console.log(diameter);
+                // skull.position.x = 1;
+            });
+
+            // Move the light with the camera
+            scene.registerBeforeRender(function () {
+                light.position = camera.position;
+            });
+
+            // GUI
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+            var panel = new BABYLON.GUI.StackPanel();
+            panel.width = "200px";
+            panel.isVertical = true;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            advancedTexture.addControl(panel);
+
+            var textBlock = new BABYLON.GUI.TextBlock();
+            textBlock.text = "Diffuse color:";
+            textBlock.height = "30px";
+            panel.addControl(textBlock);
+
+            var picker = new BABYLON.GUI.ColorPicker();
+            picker.value = skullMaterial.diffuseColor;
+            picker.height = "150px";
+            picker.width = "150px";
+            picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            picker.onValueChangedObservable.add(function (value) { // value is a color3
+                console.log(value);
+                skullMaterial.diffuseColor.copyFrom(value);
+            });
+
+            //Create dynamic texture
+            var textureResolution = 512;
+            var textureGround = new BABYLON.DynamicTexture("dynamic texture", textureResolution, scene);
+
+            var input = new BABYLON.GUI.InputText();
+            input.width = 0.2;
+            input.maxWidth = 0.2;
+            input.height = "40px";
+            input.text = "This is a very long text used to test how the cursor works within the InputText control.";
+            input.color = "white";
+            input.background = "green";
+            console.log(input);
+            input.onTextChangedObservable.add(function (text) { // value is a color3
+                var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
+
+                backgroundTexture.drawText("Some text here", 90, 70, "bold 70px Arial", "black", "#555555");
+
+                var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
+                dynamicMaterial.diffuseTexture = backgroundTexture;
+                dynamicMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+                dynamicMaterial.backFaceCulling = false;
+
+                var cylinder = BABYLON.MeshBuilder.CreateCylinder("cone", {height: 0, tessellation: 196}, scene);
+                cylinder.material = dynamicMaterial;
+                cylinder.scaling = new BABYLON.Vector3(2, 0, 2);
+            });
+            panel.addControl(input);
+
+            panel.addControl(picker);
+
+            return scene;
+        }
+
+        var engine = new BABYLON.Engine(canvas, true, {
+            preserveDrawingBuffer: true,
+            stencil: true
+        });
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+
+</html>

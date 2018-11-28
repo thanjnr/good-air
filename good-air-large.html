@@ -52,20 +52,20 @@
     
     <script src="can-configurator.js"></script>
     <script>
-        var outerCylinder, backgroundTexture, dynamicMaterial, scene;
+        var outerCylinder, backgroundTexture, dynamicMaterial, scene, customLabel;
         var canvas = document.getElementById("renderCanvas");
         var generateCanvas = document.getElementById("generateCanvas");
 
         function updateCanText() {
             var text = document.getElementById("textInput");            
 
-            Configurator.updateCustomLabel(text.value, customLabel); 
+            customLabel = Configurator.updateCustomLabel(text.value, customLabel); 
         }
 
         var scene = Configurator.init(canvas); 
         var can = Configurator.createCan();
         var canLabel = Configurator.createCanLabel();
-        var customLabel = Configurator.createCustomLabel(canLabel);
+        customLabel = Configurator.createCustomLabel(canLabel);
         Configurator.createGUI(customLabel.material, customLabel, function(evt){
             Configurator.download(generateCanvas, customLabel.texture);
         });

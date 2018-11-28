@@ -8,5 +8,21 @@
          url('fonts/zombilar-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+
+@font-face {
+    font-family: 'punk_kidregular';
+    src: url('fonts/punk_kid-webfont.woff2') format('woff2'),
+         url('fonts/punk_kid-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'times_new_yorkerregular';
+    src: url('fonts/times_new_yorker-webfont.woff2') format('woff2'),
+         url('fonts/times_new_yorker-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 
 }

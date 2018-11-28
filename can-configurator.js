@@ -117,7 +117,7 @@
           backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
           backgroundTexture.clearColor = new BABYLON.Color4(1, 0, 0, 0);
 
-          backgroundTexture.drawText("Enter custom text", 250, 250, "bold 70px Arial", "white", null, true);
+          backgroundTexture.drawText("Enter custom text", 250, 250, "bold 70px zombilariaregular", "white", null, true);
 
           var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
           dynamicMaterial.diffuseTexture = backgroundTexture;
@@ -143,7 +143,7 @@
         var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
         backgroundTexture.wAng = BABYLON.Tools.ToRadians(270)/backgroundTexture.uScale;
         backgroundTexture.clearColor = new BABYLON.Color4(1,0,0,0);    
-        backgroundTexture.drawText(text, 250, 250, "bold 70px Arial", "white", null, true);
+        backgroundTexture.drawText(text, 250, 250, "bold 70px zombilariaregular", "white", null, true);
     
         var dynamicMaterial = customLabel.material;
         dynamicMaterial.diffuseTexture = backgroundTexture;

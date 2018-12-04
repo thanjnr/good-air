@@ -8,6 +8,7 @@
           createCanLabel,
           createCustomLabel,
           updateCustomLabel,
+          updateCustomCaption,
           download,
           createGUI,
           render,
@@ -250,6 +251,35 @@
               material: dynamicMaterial
           };
       }
+
+      function updateCustomCaption(mainText, caption, customLabel) {
+        var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+        backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
+        backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+
+        var rectangle = new Path2D();
+        rectangle.rect(0, 200, 1200, 140);
+        backgroundTexture.getContext().fillStyle = "#078ac3";
+        backgroundTexture.getContext().fill(rectangle);
+        backgroundTexture.update();
+
+        backgroundTexture.drawText(mainText, 250, 270, "bold 70px helvetica", "white", null, true);
+
+        backgroundTexture.drawText(caption, 250, 300, "bold 30px arial", "white", null, true);
+
+        var dynamicMaterial = customLabel.material;
+        dynamicMaterial.diffuseTexture = backgroundTexture;
+        dynamicMaterial.opacityTexture = backgroundTexture;
+
+        var outerCylinder = customLabel.cylinder;
+        outerCylinder.material = dynamicMaterial;
+
+        return {
+            cylinder: outerCylinder,
+            texture: backgroundTexture,
+            material: dynamicMaterial
+        };
+    }
 
       function download(generateCanvas, backgroundTexture) {
           var tempImage = new Image;

@@ -21,6 +21,14 @@
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
         <script src="https://unpkg.com/merge-images"></script>
+        
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+        <!-- Custom styles -->
         <link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8" />
     </head>
 <body>
@@ -31,10 +39,16 @@
     <div class="side-bar">
         <h3>start customising</h3>
         <input id="textInput" placeholder="Enter some text" type="text"/>
-        <button onclick="updateCanText()">Update text</button>
+        <button class="waves-effect waves-light btn" onclick="updateCanText()">Update text</button>
         
-        <h3>add logo</h3>
-        <input type="file" accept="image/*" id="file-input">
+        <input id="captionInput" placeholder="cation this" type="text"/>
+        <button class="waves-effect waves-light btn" onclick="updateCanCaption()">Update caption</button>
+
+        <br />
+        <br />
+        
+        <button class="waves-effect waves-light btn" onclick="triggerUpload()">Add logo</button>
+        <input style="display: none" type="file" accept="image/*" id="file-input">
     </div>
     
     <script src="can-configurator.js"></script>
@@ -44,10 +58,21 @@
         const generateCanvas = document.getElementById("generateCanvas");
         const fileInput = document.getElementById('file-input');
 
+        function triggerUpload() {
+            fileInput.click();
+        }
+
         function updateCanText() {
             var text = document.getElementById("textInput");            
 
             customLabel = Configurator.updateCustomLabel(text.value, customLabel); 
+        }
+
+        function updateCanCaption() {
+            var text = document.getElementById("textInput");     
+            var caption = document.getElementById("captionInput");            
+
+            customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel); 
         }
 
         fileInput.addEventListener('change', (e) => {

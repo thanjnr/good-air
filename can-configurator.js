@@ -129,9 +129,9 @@
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
-          backgroundTexture.drawText("ENTER TEXT", 220, 270, "bold 70px helvetica", "white", null, true);
+          backgroundTexture.drawText("ENTER TEXT", 250, 270, "bold 70px helvetica", "white", null, true);
 
-          backgroundTexture.drawText("caption this type", 220, 300, "bold 30px arial", "white", null, true);
+          backgroundTexture.drawText("caption this type", 250, 300, "bold 30px arial", "white", null, true);
           var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
           dynamicMaterial.diffuseTexture = backgroundTexture;
           dynamicMaterial.opacityTexture = backgroundTexture;
@@ -225,8 +225,17 @@
       function updateCustomLabel(text, customLabel) {
           var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
           backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
-          backgroundTexture.clearColor = new BABYLON.Color4(1, 0, 0, 0);
-          backgroundTexture.drawText(text, 250, 250, "bold 70px punk_kidregular", "white", null, true);
+          backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+
+          var rectangle = new Path2D();
+          rectangle.rect(0, 200, 1200, 140);
+          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fill(rectangle);
+          backgroundTexture.update();
+
+          backgroundTexture.drawText(text, 250, 270, "bold 70px helvetica", "white", null, true);
+
+          backgroundTexture.drawText("caption this type", 250, 300, "bold 30px arial", "white", null, true);
 
           var dynamicMaterial = customLabel.material;
           dynamicMaterial.diffuseTexture = backgroundTexture;

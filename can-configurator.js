@@ -1,5 +1,5 @@
   var Configurator = (function () {
-      var scene, engine;
+      var scene, engine, canCylinder;
 
       return {
           init,
@@ -55,6 +55,12 @@
           engine.resize();
       }
 
+      function rotate(object) {          
+        scene.registerBeforeRender(function () {
+            object.rotation.y += 0.001;
+        });
+      }
+
       function createCan() {
           var skull;
           var skullMaterial = new BABYLON.StandardMaterial("skullmat", scene);
@@ -90,6 +96,7 @@
                   newMeshes[i].position.y = 0.95;
                   //newMeshes[i].material = skullMaterial; 
                   //newMeshes[i].diffuseColor.copyFrom({ r:255, g:0, b:0 }); 
+                  rotate(newMeshes[i]);
               }
               skull = newMeshes[0];
           });
@@ -114,6 +121,8 @@
               tessellation: 120
           }, scene);
           innerCylinder.material = canMaterial;
+
+          rotate(innerCylinder);
 
           return innerCylinder;
       }
@@ -145,6 +154,8 @@
 
           outerCylinder = innerCylinder.clone('outer');
           outerCylinder.material = dynamicMaterial;
+
+          rotate(outerCylinder);
 
           return {
               cylinder: outerCylinder,
@@ -194,19 +205,19 @@
                   //Add image to dynamic texture
                   customLabel.texture.getContext().drawImage(this, 400, 820, 250, 175);
 
-                 /*  // get the image data object
-                  var image = customLabel.texture.getContext().getImageData(400, 820, 250, 175);
-                  // get the image data values 
-                  var imageData = image.data,
-                      length = imageData.length;
-                  // set every fourth value to 50
-                  for (var i = 3; i < length; i += 4) {
-                      imageData[i] = 50;
-                  }
-                  // after the manipulation, reset the data
-                  image.data = imageData;
-                  // and put the imagedata back to the canvas
-                  customLabel.texture.getContext().putImageData(image, 400, 820); */
+                  /*  // get the image data object
+                   var image = customLabel.texture.getContext().getImageData(400, 820, 250, 175);
+                   // get the image data values 
+                   var imageData = image.data,
+                       length = imageData.length;
+                   // set every fourth value to 50
+                   for (var i = 3; i < length; i += 4) {
+                       imageData[i] = 50;
+                   }
+                   // after the manipulation, reset the data
+                   image.data = imageData;
+                   // and put the imagedata back to the canvas
+                   customLabel.texture.getContext().putImageData(image, 400, 820); */
 
                   customLabel.texture.update();
 
@@ -245,6 +256,8 @@
           var outerCylinder = customLabel.cylinder;
           outerCylinder.material = dynamicMaterial;
 
+          // rotate(outerCylinder);
+
           return {
               cylinder: outerCylinder,
               texture: backgroundTexture,
@@ -253,33 +266,35 @@
       }
 
       function updateCustomCaption(mainText, caption, customLabel) {
-        var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
-        backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
-        backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+          backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
+          backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-        var rectangle = new Path2D();
-        rectangle.rect(0, 200, 1200, 140);
-        backgroundTexture.getContext().fillStyle = "#078ac3";
-        backgroundTexture.getContext().fill(rectangle);
-        backgroundTexture.update();
+          var rectangle = new Path2D();
+          rectangle.rect(0, 200, 1200, 140);
+          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fill(rectangle);
+          backgroundTexture.update();
 
-        backgroundTexture.drawText(mainText, 250, 270, "bold 70px helvetica", "white", null, true);
+          backgroundTexture.drawText(mainText, 250, 270, "bold 70px helvetica", "white", null, true);
 
-        backgroundTexture.drawText(caption, 250, 300, "bold 30px arial", "white", null, true);
+          backgroundTexture.drawText(caption, 250, 300, "bold 30px arial", "white", null, true);
 
-        var dynamicMaterial = customLabel.material;
-        dynamicMaterial.diffuseTexture = backgroundTexture;
-        dynamicMaterial.opacityTexture = backgroundTexture;
+          var dynamicMaterial = customLabel.material;
+          dynamicMaterial.diffuseTexture = backgroundTexture;
+          dynamicMaterial.opacityTexture = backgroundTexture;
 
-        var outerCylinder = customLabel.cylinder;
-        outerCylinder.material = dynamicMaterial;
+          var outerCylinder = customLabel.cylinder;
+          outerCylinder.material = dynamicMaterial;
 
-        return {
-            cylinder: outerCylinder,
-            texture: backgroundTexture,
-            material: dynamicMaterial
-        };
-    }
+          // rotate(outerCylinder);
+
+          return {
+              cylinder: outerCylinder,
+              texture: backgroundTexture,
+              material: dynamicMaterial
+          };
+      }
 
       function download(generateCanvas, backgroundTexture) {
           var tempImage = new Image;

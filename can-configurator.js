@@ -3,6 +3,7 @@
 
       return {
           init,
+          addImageToCan,
           createCan,
           createCanLabel,
           createCustomLabel,
@@ -14,7 +15,10 @@
       };
 
       function init(canvas) {
-          engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
+          engine = new BABYLON.Engine(canvas, true, {
+              preserveDrawingBuffer: true,
+              stencil: true
+          });
           scene = new BABYLON.Scene(engine);
           scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
           var camera = new BABYLON.ArcRotateCamera("Camera", 5 * Math.PI / 8, 7 * Math.PI / 16, 3, BABYLON.Vector3.Zero(), scene);
@@ -38,16 +42,16 @@
           return scene;
       }
 
-      function render() {          
-        engine.runRenderLoop(function () {
-            if (scene) {
-                scene.render();
-            }
-        });
+      function render() {
+          engine.runRenderLoop(function () {
+              if (scene) {
+                  scene.render();
+              }
+          });
       }
-      
-      function resize() {          
-        engine.resize();
+
+      function resize() {
+          engine.resize();
       }
 
       function createCan() {
@@ -105,7 +109,8 @@
           var innerCylinder = BABYLON.MeshBuilder.CreateCylinder("can", {
               height: 2.60,
               faceUV: faceUV,
-              faceColors: faceColors
+              faceColors: faceColors,
+              tessellation: 120
           }, scene);
           innerCylinder.material = canMaterial;
 
@@ -115,17 +120,25 @@
       function createCustomLabel(innerCylinder) {
           var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
           backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
-          backgroundTexture.clearColor = new BABYLON.Color4(1, 0, 0, 0);
+          backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-          backgroundTexture.drawText("Enter custom text", 250, 250, "bold 70px punk_kidregular", "white", null, true);
 
+          var rectangle = new Path2D();
+          rectangle.rect(0, 200, 1200, 140);
+          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fill(rectangle);
+          backgroundTexture.update();
+
+          backgroundTexture.drawText("ENTER TEXT", 220, 270, "bold 70px helvetica", "white", null, true);
+
+          backgroundTexture.drawText("caption this type", 220, 300, "bold 30px arial", "white", null, true);
           var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
           dynamicMaterial.diffuseTexture = backgroundTexture;
           dynamicMaterial.opacityTexture = backgroundTexture;
-          dynamicMaterial.diffuseTexture.invertZ = true;
+          // dynamicMaterial.diffuseTexture.invertZ = true;
           // dynamicMaterial.diffuseTexture.vAng = 1;
           // dynamicMaterial.diffuseTexture.wAng = BABYLON.Tools.ToRadians(90)/backgroundTexture.uScale;
-          // dynamicMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+          dynamicMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
           dynamicMaterial.clearColor = new BABYLON.Color4(1, 0, 0, 0);
           dynamicMaterial.backFaceCulling = false;
 
@@ -139,34 +152,104 @@
           };
       }
 
-      function updateCustomLabel(text, customLabel) {      
-        var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
-        backgroundTexture.wAng = BABYLON.Tools.ToRadians(270)/backgroundTexture.uScale;
-        backgroundTexture.clearColor = new BABYLON.Color4(1,0,0,0);    
-        backgroundTexture.drawText(text, 250, 250, "bold 70px punk_kidregular", "white", null, true);
-    
-        var dynamicMaterial = customLabel.material;
-        dynamicMaterial.diffuseTexture = backgroundTexture;
-        dynamicMaterial.opacityTexture = backgroundTexture;
+      function createHorizontalCustomLabel(innerCylinder) {
+          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
 
-        var outerCylinder = customLabel.cylinder;
-        outerCylinder.material = dynamicMaterial; 
+          var rectangle = new Path2D();
+          rectangle.rect(30, 270, 1200, 70);
+          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fill(rectangle);
+          backgroundTexture.update();
 
-        return {
-            cylinder: outerCylinder,
-            texture: backgroundTexture,
-            material: dynamicMaterial
-        };
-    }
+          backgroundTexture.drawText("Enter text", 40, 330, "normal 70px zombilariaregular", "white", null, true);
+          var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
+          dynamicMaterial.diffuseTexture = backgroundTexture;
+          dynamicMaterial.opacityTexture = backgroundTexture;
+          // dynamicMaterial.diffuseTexture.invertZ = true;
+          // dynamicMaterial.diffuseTexture.vAng = 1;
+          // dynamicMaterial.diffuseTexture.wAng = BABYLON.Tools.ToRadians(90)/backgroundTexture.uScale;
+          dynamicMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+          dynamicMaterial.clearColor = new BABYLON.Color4(1, 0, 0, 0);
+          dynamicMaterial.backFaceCulling = false;
+
+          outerCylinder = innerCylinder.clone('outer');
+          outerCylinder.material = dynamicMaterial;
+
+          return {
+              cylinder: outerCylinder,
+              texture: backgroundTexture,
+              material: dynamicMaterial
+          };
+      }
+
+      function addImageToCan(image, customLabel) {
+          if (image !== null) {
+              console.log(image);
+              var img = new Image();
+              img.src = URL.createObjectURL(image);
+
+              img.onload = function () {
+                  console.log(this);
+                  //Add image to dynamic texture
+                  customLabel.texture.getContext().drawImage(this, 400, 820, 250, 175);
+
+                 /*  // get the image data object
+                  var image = customLabel.texture.getContext().getImageData(400, 820, 250, 175);
+                  // get the image data values 
+                  var imageData = image.data,
+                      length = imageData.length;
+                  // set every fourth value to 50
+                  for (var i = 3; i < length; i += 4) {
+                      imageData[i] = 50;
+                  }
+                  // after the manipulation, reset the data
+                  image.data = imageData;
+                  // and put the imagedata back to the canvas
+                  customLabel.texture.getContext().putImageData(image, 400, 820); */
+
+                  customLabel.texture.update();
+
+                  var dynamicMaterial = customLabel.material;
+                  dynamicMaterial.diffuseTexture = customLabel.texture;
+                  dynamicMaterial.opacityTexture = customLabel.texture;
+
+                  var outerCylinder = customLabel.cylinder;
+                  outerCylinder.material = dynamicMaterial;
+              }
+          }
+
+          return customLabel;
+
+      }
+
+      function updateCustomLabel(text, customLabel) {
+          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+          backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
+          backgroundTexture.clearColor = new BABYLON.Color4(1, 0, 0, 0);
+          backgroundTexture.drawText(text, 250, 250, "bold 70px punk_kidregular", "white", null, true);
+
+          var dynamicMaterial = customLabel.material;
+          dynamicMaterial.diffuseTexture = backgroundTexture;
+          dynamicMaterial.opacityTexture = backgroundTexture;
+
+          var outerCylinder = customLabel.cylinder;
+          outerCylinder.material = dynamicMaterial;
+
+          return {
+              cylinder: outerCylinder,
+              texture: backgroundTexture,
+              material: dynamicMaterial
+          };
+      }
 
       function download(generateCanvas, backgroundTexture) {
           var tempImage = new Image;
           tempImage.src = backgroundTexture.getContext().canvas.toDataURL("image/png");
 
           tempImage.onload = function () {
-              generateCanvas.width = 793;
+              generateCanvas.width = 300;
               generateCanvas.height = 960;
-              generateCanvas.getContext("2d").translate(793, 793 / 793);
+              /* generateCanvas.getContext("2d").translate(793, 793 / 793);
               generateCanvas.getContext("2d").rotate(Math.PI / 2);
               //generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
 
@@ -175,7 +258,7 @@
               //generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
 
               generateCanvas.getContext("2d").translate(793, 960 / 793);
-              generateCanvas.getContext("2d").rotate(Math.PI / 2);
+              generateCanvas.getContext("2d").rotate(Math.PI / 2); */
               generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
 
               var imageurl = generateCanvas.toDataURL("image/png");

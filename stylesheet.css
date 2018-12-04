@@ -26,3 +26,28 @@
     font-style: normal;
 
 }
+
+h3 {
+    font-family: Helvetica Neue,Helvetica,Arial,Segoe UI,sans-serif!important;
+    color: #242424!important;
+    line-height: 32px!important;
+    margin-bottom: 10px!important;
+    font-size: 22px!important;
+    font-weight: 700!important;
+    font-style: normal!important;
+}
+
+.side-bar {
+    background-color: #f5f5f5;
+    width: 200px;
+    width: 300px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    padding: 15px;
+}
+
+.configurator-container {
+    margin-left: 300px;
+}

@@ -41,26 +41,34 @@
         </style>
     </head>
 <body>
-    <canvas id="renderCanvas"></canvas>
+    <canvas id="renderCanvas" class="configurator-container"></canvas>
     <div style="display: none;">
         <canvas id="generateCanvas"></canvas>
     </div>
-    <div style="width: 200px; width: 300px; top: 0; left: 0; position:absolute">
+    <div class="side-bar">
+        <h3>start customising</h3>
         <input id="textInput" placeholder="Enter some text" type="text"/>
         <button onclick="updateCanText()">Update text</button>
+        
+        <input type="file" accept="image/*" id="file-input">
     </div>
     
     <script src="can-configurator.js"></script>
     <script>
         var outerCylinder, backgroundTexture, dynamicMaterial, scene, customLabel;
-        var canvas = document.getElementById("renderCanvas");
-        var generateCanvas = document.getElementById("generateCanvas");
+        const canvas = document.getElementById("renderCanvas");
+        const generateCanvas = document.getElementById("generateCanvas");
+        const fileInput = document.getElementById('file-input');
 
         function updateCanText() {
             var text = document.getElementById("textInput");            
 
             customLabel = Configurator.updateCustomLabel(text.value, customLabel); 
         }
+
+        fileInput.addEventListener('change', (e) => {
+            customLabel = Configurator.addImageToCan(e.target.files[0], customLabel);
+        });
 
         var scene = Configurator.init(canvas); 
         var can = Configurator.createCan();

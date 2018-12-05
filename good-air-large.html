@@ -49,6 +49,11 @@
         
         <button class="waves-effect waves-light btn" onclick="triggerUpload()">Add logo</button>
         <input style="display: none" type="file" accept="image/*" id="file-input">
+        
+        <br />
+        <br />
+        
+        <button class="waves-effect waves-light btn" onclick="download()">Download</button>
     </div>
     
     <script src="can-configurator.js"></script>
@@ -73,6 +78,10 @@
             var caption = document.getElementById("captionInput");            
 
             customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel); 
+        }
+
+        function download() {            
+            Configurator.download(generateCanvas, customLabel.texture);
         }
 
         fileInput.addEventListener('change', (e) => {

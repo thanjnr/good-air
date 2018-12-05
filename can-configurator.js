@@ -1,5 +1,5 @@
   var Configurator = (function () {
-      var scene, engine, canCylinder;
+      var scene, engine, logo;
 
       return {
           init,
@@ -55,10 +55,10 @@
           engine.resize();
       }
 
-      function rotate(object) {          
-        scene.registerBeforeRender(function () {
-            object.rotation.y += 0.001;
-        });
+      function rotate(object) {
+          scene.registerBeforeRender(function () {
+              object.rotation.y += 0.001;
+          });
       }
 
       function createCan() {
@@ -196,12 +196,11 @@
 
       function addImageToCan(image, customLabel) {
           if (image !== null) {
-              console.log(image);
               var img = new Image();
               img.src = URL.createObjectURL(image);
+              logo = URL.createObjectURL(image);
 
               img.onload = function () {
-                  console.log(this);
                   //Add image to dynamic texture
                   customLabel.texture.getContext().drawImage(this, 400, 820, 250, 175);
 
@@ -235,9 +234,7 @@
       }
 
       function updateCustomLabel(text, customLabel) {
-          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
-          backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
-          backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+          var backgroundTexture = customLabel.texture;
 
           var rectangle = new Path2D();
           rectangle.rect(0, 200, 1200, 140);
@@ -266,9 +263,7 @@
       }
 
       function updateCustomCaption(mainText, caption, customLabel) {
-          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
-          backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
-          backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+          var backgroundTexture = customLabel.texture;
 
           var rectangle = new Path2D();
           rectangle.rect(0, 200, 1200, 140);
@@ -298,49 +293,74 @@
 
       function download(generateCanvas, backgroundTexture) {
           var tempImage = new Image;
-          tempImage.src = backgroundTexture.getContext().canvas.toDataURL("image/png");
 
-          tempImage.onload = function () {
-              generateCanvas.width = 300;
-              generateCanvas.height = 960;
-              /* generateCanvas.getContext("2d").translate(793, 793 / 793);
-              generateCanvas.getContext("2d").rotate(Math.PI / 2);
-              //generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+          backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+          backgroundTexture.wAng = BABYLON.Tools.ToRadians(270) / backgroundTexture.uScale;
+          backgroundTexture.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-              generateCanvas.getContext("2d").translate(960, 793 / 960);
-              generateCanvas.getContext("2d").rotate(Math.PI / 2);
-              //generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
 
-              generateCanvas.getContext("2d").translate(793, 960 / 793);
-              generateCanvas.getContext("2d").rotate(Math.PI / 2); */
-              generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+          var rectangle = new Path2D();
+          rectangle.rect(0, 150, 1200, 120);
+          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fill(rectangle);
+          backgroundTexture.update();
 
-              var imageurl = generateCanvas.toDataURL("image/png");
+          backgroundTexture.drawText("ENTER TEXT", 250, 220, "bold 70px helvetica", "white", null, true);
 
-              //Creating a link if the browser have the download attribute on the a tag, to automatically start download generated image.
-              if ("download" in document.createElement("a")) {
-                  var a = window.document.createElement("a");
-                  mergeImages(['/good_air_can_large.png', imageurl])
-                      .then((b64) => {
-                          console.log(b64);
-                          a.href = b64
-                          a.setAttribute("download", "dynamictexture.png");
+          backgroundTexture.drawText("caption this type", 250, 250, "bold 30px arial", "white", null, true);
 
-                          window.document.body.appendChild(a);
+          var img = new Image();
+          img.src = logo;
+          img.onload = function () {
+              //Add image to dynamic texture
+              backgroundTexture.getContext().drawImage(this, 400, 645, 200, 130);
+              backgroundTexture.update();
 
-                          a.addEventListener("click", function () {
-                              a.parentElement.removeChild(a);
+              tempImage.src = backgroundTexture.getContext().canvas.toDataURL("image/png");
+
+              tempImage.onload = function () {
+                  generateCanvas.width = 793;
+                  generateCanvas.height = 960;
+                  generateCanvas.getContext("2d").translate(793, 793 / 793);
+                  generateCanvas.getContext("2d").rotate(Math.PI / 2);
+                  //generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+
+                  generateCanvas.getContext("2d").translate(960, 793 / 960);
+                  generateCanvas.getContext("2d").rotate(Math.PI / 2);
+                  //generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+
+                  generateCanvas.getContext("2d").translate(793, 960 / 793);
+                  generateCanvas.getContext("2d").rotate(Math.PI / 2);
+                  generateCanvas.getContext("2d").drawImage(tempImage, 0, 0);
+
+                  var imageurl = generateCanvas.toDataURL("image/png");
+
+                  //Creating a link if the browser have the download attribute on the a tag, to automatically start download generated image.
+                  if ("download" in document.createElement("a")) {
+                      var a = window.document.createElement("a");
+                      mergeImages(['/good_air_can_large.png', imageurl])
+                          .then((b64) => {
+                              console.log(b64);
+                              a.href = b64
+                              a.setAttribute("download", "dynamictexture.png");
+
+                              window.document.body.appendChild(a);
+
+                              a.addEventListener("click", function () {
+                                  a.parentElement.removeChild(a);
+                              });
+                              a.click();
                           });
-                          a.click();
-                      });
 
-                  //Or opening a new tab with the image if it is not possible to automatically start download.
-              } else {
-                  var newWindow = window.open("");
-                  var img = newWindow.document.createElement("img");
-                  img.src = imageurl;
-                  newWindow.document.body.appendChild(img);
+                      //Or opening a new tab with the image if it is not possible to automatically start download.
+                  } else {
+                      var newWindow = window.open("");
+                      var img = newWindow.document.createElement("img");
+                      img.src = imageurl;
+                      newWindow.document.body.appendChild(img);
+                  }
               }
+
           }
           /// rotate canvas context
           // tempCtx.rotate(0.5 * Math.PI); /// 90deg clock-wise

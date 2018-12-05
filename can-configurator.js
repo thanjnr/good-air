@@ -1,5 +1,5 @@
   var Configurator = (function () {
-      var scene, engine, logo, mainTagline, captionTagline;
+      var scene, engine, logo, mainTagline, captionTagline, bgFillColor = "#078ac3";
 
       return {
           init,
@@ -238,7 +238,7 @@
 
           var rectangle = new Path2D();
           rectangle.rect(0, 200, 1200, 140);
-          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fillStyle = bgFillColor;
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
@@ -262,12 +262,13 @@
           };
       }
 
-      function updateCustomCaption(mainText, caption, customLabel) {
+      function updateCustomCaption(mainText, caption, customLabel, fillColor = "#078ac3") {
           var backgroundTexture = customLabel.texture;
 
+          bgFillColor = fillColor;
           var rectangle = new Path2D();
           rectangle.rect(0, 200, 1200, 140);
-          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fillStyle = fillColor;
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
@@ -303,7 +304,7 @@
 
           var rectangle = new Path2D();
           rectangle.rect(0, 150, 1200, 120);
-          backgroundTexture.getContext().fillStyle = "#078ac3";
+          backgroundTexture.getContext().fillStyle = bgFillColor;
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 

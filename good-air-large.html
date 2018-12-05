@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <title>GoodAir - Customise</title>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <!-- Babylon.js -->
-        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
-        <script src="https://preview.babylonjs.com/cannon.js"></script>
-        <script src="https://preview.babylonjs.com/Oimo.js"></script>
-        <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
-        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
-        <script src="https://preview.babylonjs.com/babylon.js"></script>
-        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
-        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
-        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
-        <script src="https://unpkg.com/merge-images"></script>
-        
-        <!-- Compiled and minified CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    
-        <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <title>GoodAir - Customise</title>
 
-        <!-- Custom styles -->
-        <link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8" />
-    </head>
+    <!-- Babylon.js -->
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://unpkg.com/merge-images"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- color picker -->
+    <script src="jscolor.js"></script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8" />
+</head>
+
 <body>
     <canvas id="renderCanvas" class="configurator-container"></canvas>
     <div style="display: none;">
@@ -38,24 +43,29 @@
     </div>
     <div class="side-bar">
         <h3>start customising</h3>
-        <input id="textInput" placeholder="Enter some text" type="text" onblur="updateCanText()"/>
+        <input id="textInput" placeholder="Enter some text" type="text" onblur="updateCanText()" />
         <!-- <button class="waves-effect waves-light btn" onclick="updateCanText()">Update text</button> -->
-        
-        <input id="captionInput" placeholder="cation this" type="text" onblur="updateCanCaption()"/>
+
+        <input id="captionInput" placeholder="cation this" type="text" onblur="updateCanCaption()" />
         <!-- <button class="waves-effect waves-light btn" onclick="updateCanCaption()">Update caption</button> -->
 
         <br />
         <br />
-        
+        <h3>background color:</h3>
+        <input id="picker" class="jscolor" value="078ac3" onchange="setTextColor()">
+
+        <br />
+        <br />
+
         <button class="waves-effect waves-light btn" onclick="triggerUpload()">Add logo</button>
         <input style="display: none" type="file" accept="image/*" id="file-input">
-        
+
         <br />
         <br />
-        
+
         <button class="waves-effect waves-light btn" onclick="download()">Download</button>
     </div>
-    
+
     <script src="can-configurator.js"></script>
     <script>
         var outerCylinder, backgroundTexture, dynamicMaterial, scene, customLabel;
@@ -68,19 +78,28 @@
         }
 
         function updateCanText() {
-            var text = document.getElementById("textInput");            
+            var text = document.getElementById("textInput");
 
-            customLabel = Configurator.updateCustomLabel(text.value, customLabel); 
+            customLabel = Configurator.updateCustomLabel(text.value, customLabel);
         }
 
         function updateCanCaption() {
-            var text = document.getElementById("textInput");     
-            var caption = document.getElementById("captionInput");            
+            var text = document.getElementById("textInput");
+            var caption = document.getElementById("captionInput");
+            var fillColor = '#' + document.getElementById("picker").value;
 
-            customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel); 
+            customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel, fillColor);
         }
 
-        function download() {            
+        function setTextColor(picker) {
+            var fillColor = '#' + document.getElementById("picker").value;
+            var text = document.getElementById("textInput");
+            var caption = document.getElementById("captionInput");
+
+            customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel, fillColor);
+        }
+
+        function download() {
             Configurator.download(generateCanvas, customLabel.texture);
         }
 
@@ -88,11 +107,11 @@
             customLabel = Configurator.addImageToCan(e.target.files[0], customLabel);
         });
 
-        var scene = Configurator.init(canvas); 
+        var scene = Configurator.init(canvas);
         var can = Configurator.createCan();
         var canLabel = Configurator.createCanLabel();
         customLabel = Configurator.createCustomLabel(canLabel);
-        Configurator.createGUI(customLabel.material, customLabel, function(evt){
+        Configurator.createGUI(customLabel.material, customLabel, function (evt) {
             Configurator.download(generateCanvas, customLabel.texture);
         });
 
@@ -104,4 +123,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -1,5 +1,5 @@
   var Configurator = (function () {
-      var scene, engine, logo;
+      var scene, engine, logo, mainTagline, captionTagline;
 
       return {
           init,
@@ -271,8 +271,10 @@
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
+          mainTagline = mainText;
           backgroundTexture.drawText(mainText, 250, 270, "bold 70px helvetica", "white", null, true);
 
+          captionTagline = caption;
           backgroundTexture.drawText(caption, 250, 300, "bold 30px arial", "white", null, true);
 
           var dynamicMaterial = customLabel.material;
@@ -305,9 +307,9 @@
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
-          backgroundTexture.drawText("ENTER TEXT", 250, 220, "bold 70px helvetica", "white", null, true);
+          backgroundTexture.drawText(mainTagline, 250, 220, "bold 70px helvetica", "white", null, true);
 
-          backgroundTexture.drawText("caption this type", 250, 250, "bold 30px arial", "white", null, true);
+          backgroundTexture.drawText(captionTagline, 250, 250, "bold 30px arial", "white", null, true);
 
           var img = new Image();
           img.src = logo;

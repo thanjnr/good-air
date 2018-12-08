@@ -22,6 +22,7 @@
     <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
     <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
     <script src="https://unpkg.com/merge-images"></script>
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow" rel="stylesheet">
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -100,7 +101,7 @@
         }
 
         function download() {
-            Configurator.download(generateCanvas, customLabel.texture);
+            Configurator.download(generateCanvas, customLabel);
         }
 
         fileInput.addEventListener('change', (e) => {
@@ -111,9 +112,6 @@
         var can = Configurator.createCan();
         var canLabel = Configurator.createCanLabel();
         customLabel = Configurator.createCustomLabel(canLabel);
-        Configurator.createGUI(customLabel.material, customLabel, function (evt) {
-            Configurator.download(generateCanvas, customLabel.texture);
-        });
 
         Configurator.render();
 

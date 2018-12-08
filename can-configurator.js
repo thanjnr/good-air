@@ -134,14 +134,14 @@
 
 
           var rectangle = new Path2D();
-          rectangle.rect(0, 200, 1200, 140);
+          rectangle.rect(0, 200, 1200, 122);
           backgroundTexture.getContext().fillStyle = "#078ac3";
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
-          backgroundTexture.drawText("ENTER TEXT", 250, 270, "bold 70px helvetica", "white", null, true);
+          backgroundTexture.drawText("ENTER TEXT", 250, 270, "70px 'Archivo Black'", "white", null, true);
 
-          backgroundTexture.drawText("caption this type", 250, 300, "bold 30px arial", "white", null, true);
+          backgroundTexture.drawText("CAPTION THIS TEXT", 250, 300, "32px 'Archivo Narrow'", "white", null, true);
           var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
           dynamicMaterial.diffuseTexture = backgroundTexture;
           dynamicMaterial.opacityTexture = backgroundTexture;
@@ -157,41 +157,7 @@
 
           rotate(outerCylinder);
 
-          return {
-              cylinder: outerCylinder,
-              texture: backgroundTexture,
-              material: dynamicMaterial
-          };
-      }
-
-      function createHorizontalCustomLabel(innerCylinder) {
-          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
-
-          var rectangle = new Path2D();
-          rectangle.rect(30, 270, 1200, 70);
-          backgroundTexture.getContext().fillStyle = "#078ac3";
-          backgroundTexture.getContext().fill(rectangle);
-          backgroundTexture.update();
-
-          backgroundTexture.drawText("Enter text", 40, 330, "normal 70px zombilariaregular", "white", null, true);
-          var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
-          dynamicMaterial.diffuseTexture = backgroundTexture;
-          dynamicMaterial.opacityTexture = backgroundTexture;
-          // dynamicMaterial.diffuseTexture.invertZ = true;
-          // dynamicMaterial.diffuseTexture.vAng = 1;
-          // dynamicMaterial.diffuseTexture.wAng = BABYLON.Tools.ToRadians(90)/backgroundTexture.uScale;
-          dynamicMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-          dynamicMaterial.clearColor = new BABYLON.Color4(1, 0, 0, 0);
-          dynamicMaterial.backFaceCulling = false;
-
-          outerCylinder = innerCylinder.clone('outer');
-          outerCylinder.material = dynamicMaterial;
-
-          return {
-              cylinder: outerCylinder,
-              texture: backgroundTexture,
-              material: dynamicMaterial
-          };
+          return backgroundTexture;
       }
 
       function addImageToCan(image, customLabel) {
@@ -202,30 +168,23 @@
 
               img.onload = function () {
                   //Add image to dynamic texture
-                  customLabel.texture.getContext().drawImage(this, 400, 820, 250, 175);
+                  customLabel.getContext().drawImage(this, 400, 820, 250, 175);
 
-                  /*  // get the image data object
-                   var image = customLabel.texture.getContext().getImageData(400, 820, 250, 175);
+                   // get the image data object
+                   var image = customLabel.getContext().getImageData(400, 820, 250, 175);
                    // get the image data values 
                    var imageData = image.data,
                        length = imageData.length;
                    // set every fourth value to 50
                    for (var i = 3; i < length; i += 4) {
-                       imageData[i] = 50;
+                       imageData[i] = 30;
                    }
                    // after the manipulation, reset the data
                    image.data = imageData;
                    // and put the imagedata back to the canvas
-                   customLabel.texture.getContext().putImageData(image, 400, 820); */
+                   customLabel.getContext().putImageData(image, 400, 820);
 
-                  customLabel.texture.update();
-
-                  var dynamicMaterial = customLabel.material;
-                  dynamicMaterial.diffuseTexture = customLabel.texture;
-                  dynamicMaterial.opacityTexture = customLabel.texture;
-
-                  var outerCylinder = customLabel.cylinder;
-                  outerCylinder.material = dynamicMaterial;
+                  customLabel.update();
               }
           }
 
@@ -233,65 +192,41 @@
 
       }
 
-      function updateCustomLabel(text, customLabel) {
-          var backgroundTexture = customLabel.texture;
+      function updateCustomLabel(text, texture) {
+          var backgroundTexture = texture;
 
           var rectangle = new Path2D();
-          rectangle.rect(0, 200, 1200, 140);
+          rectangle.rect(0, 200, 1200, 122);
           backgroundTexture.getContext().fillStyle = bgFillColor;
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
-          backgroundTexture.drawText(text, 250, 270, "bold 70px helvetica", "white", null, true);
+          backgroundTexture.drawText(text, 250, 270, "70px 'Archivo Black'", "white", null, true);
 
-          backgroundTexture.drawText("caption this type", 250, 300, "bold 30px arial", "white", null, true);
+          backgroundTexture.drawText("CAPTION THIS TEXT", 250, 300, "32px 'Archivo Narrow'", "white", null, true);
 
-          var dynamicMaterial = customLabel.material;
-          dynamicMaterial.diffuseTexture = backgroundTexture;
-          dynamicMaterial.opacityTexture = backgroundTexture;
-
-          var outerCylinder = customLabel.cylinder;
-          outerCylinder.material = dynamicMaterial;
-
-          // rotate(outerCylinder);
-
-          return {
-              cylinder: outerCylinder,
-              texture: backgroundTexture,
-              material: dynamicMaterial
-          };
+          return backgroundTexture;
       }
 
       function updateCustomCaption(mainText, caption, customLabel, fillColor = "#078ac3") {
-          var backgroundTexture = customLabel.texture;
+          var backgroundTexture = customLabel;
 
           bgFillColor = fillColor;
           var rectangle = new Path2D();
-          rectangle.rect(0, 200, 1200, 140);
+          rectangle.rect(0, 200, 1200, 122);
           backgroundTexture.getContext().fillStyle = fillColor;
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
 
           mainTagline = mainText;
-          backgroundTexture.drawText(mainText, 250, 270, "bold 70px helvetica", "white", null, true);
+          backgroundTexture.drawText(mainText.toUpperCase(), 250, 270, "70px 'Archivo Black'", "white", null, true);
 
           captionTagline = caption;
-          backgroundTexture.drawText(caption, 250, 300, "bold 30px arial", "white", null, true);
-
-          var dynamicMaterial = customLabel.material;
-          dynamicMaterial.diffuseTexture = backgroundTexture;
-          dynamicMaterial.opacityTexture = backgroundTexture;
-
-          var outerCylinder = customLabel.cylinder;
-          outerCylinder.material = dynamicMaterial;
+          backgroundTexture.drawText(caption.toUpperCase(), 250, 300, "32px 'Archivo Narrow'", "white", null, true);
 
           // rotate(outerCylinder);
 
-          return {
-              cylinder: outerCylinder,
-              texture: backgroundTexture,
-              material: dynamicMaterial
-          };
+          return backgroundTexture;
       }
 
       function download(generateCanvas, backgroundTexture) {
@@ -307,10 +242,10 @@
           backgroundTexture.getContext().fillStyle = bgFillColor;
           backgroundTexture.getContext().fill(rectangle);
           backgroundTexture.update();
+          
+          backgroundTexture.drawText(mainTagline, 250, 220, "70px 'Archivo Black'", "white", null, true);
 
-          backgroundTexture.drawText(mainTagline, 250, 220, "bold 70px helvetica", "white", null, true);
-
-          backgroundTexture.drawText(captionTagline, 250, 250, "bold 30px arial", "white", null, true);
+          backgroundTexture.drawText(captionTagline, 250, 250, "32px 'Archivo Narrow'", "white", null, true);
 
           var img = new Image();
           img.src = logo;

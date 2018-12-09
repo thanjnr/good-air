@@ -85,12 +85,14 @@ var Raleway = function (mesh) {
         backgroundTexture.drawText(mainText.toUpperCase(), 20, 430, "800 75px 'Raleway'", fillColor, null, true);
         
         mainTagline = mainText;
-        backgroundTexture.drawText(caption.toUpperCase(), 20, 500, "800 75px 'Raleway'", "white", null, true);
+        backgroundTexture.drawText(caption.toUpperCase(), 20, 500, "800 75px 'Roboto Condensed'", "white", null, true);
                 
-        backgroundTexture.drawText('Lorem Ipsum is simply dummy text of the printing', 20, 565, "16px 'Roboto Condensed'", "white", null, true);        
-        backgroundTexture.drawText('and typesetting. Lorem Ipsum has been the industry\'s', 20, 580, "16px 'Roboto Condensed'", "white", null, true);              
-        backgroundTexture.drawText('text ever since the 1500s ', 20, 595, "16px 'Roboto Condensed'", "white", null, true);
+        backgroundTexture.drawText('Lorem Ipsum is simply dummy text of the', 20, 565, "16px 'Roboto Condensed'", "white", null, true);        
+        backgroundTexture.drawText('printing and typesetting. Lorem Ipsum', 20, 580, "16px 'Roboto Condensed'", "white", null, true);              
+        backgroundTexture.drawText('has been the industry\'s text ever', 20, 595, "16px 'Roboto Condensed'", "white", null, true);             
+        backgroundTexture.drawText('since the 1500s ', 20, 610, "16px 'Roboto Condensed'", "white", null, true);
 
+        backgroundTexture.update();
         // rotate(outerCylinder);
     }
 

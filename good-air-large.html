@@ -22,7 +22,7 @@
     <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
     <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
     <script src="https://unpkg.com/merge-images"></script>
-    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow|Raleway|Roboto" rel="stylesheet">
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -67,7 +67,8 @@
         <button class="waves-effect waves-light btn" onclick="download()">Download</button>
     </div>
 
-    <script src="/templates/template.js"></script>
+    <script src="/templates/raleway.js"></script>
+    <script src="/templates/archivo.js"></script>
     <script src="can-configurator.js"></script>
     <script>
         var outerCylinder, backgroundTexture, dynamicMaterial, scene, texture;
@@ -112,7 +113,7 @@
         var scene = Configurator.init(canvas);
         var can = Configurator.createCan();
         var canLabel = Configurator.createCanLabel();
-        Configurator.selectTemplate(new ArchivoTemplate(canLabel));
+        Configurator.selectTemplate(new Raleway(canLabel));
 
         Configurator.render();
 

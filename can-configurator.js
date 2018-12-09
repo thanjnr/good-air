@@ -1,5 +1,5 @@
   var Configurator = (function () {
-      var scene, engine, logo, mainTagline, captionTagline, bgFillColor = "#078ac3",
+      var scene, engine, logo, mainTagline, captionTagline, bgFillColor = "#078ac3", pauseRotation = false,
           template;
 
       return {
@@ -8,6 +8,7 @@
           createCan,
           createCanLabel,
           selectTemplate,
+          stopRotation,
           updateTemplate,
           download,
           createGUI,
@@ -57,8 +58,14 @@
 
       function rotate(object) {
           scene.registerBeforeRender(function () {
-              object.rotation.y += 0.001;
+              if (!pauseRotation) {
+                object.rotation.y += 0.001;
+              }
           });
+      }
+
+      function stopRotation() {
+          pauseRotation = !pauseRotation;
       }
 
       function createCan() {

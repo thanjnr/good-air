@@ -16,7 +16,7 @@ var Raleway = function (mesh) {
         var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
         
         bgRectangle = new Path2D();
-        bgRectangle.rect(30, 200, 1200, 122);
+        bgRectangle.rect(20, 525, 40, 4);
 
         texture = backgroundTexture;
         updateTemplate();
@@ -49,10 +49,10 @@ var Raleway = function (mesh) {
 
             img.onload = function () {
                 //Add image to dynamic texture
-                backgroundTexture.getContext().drawImage(this, 800, 380, 200, 175);
+                backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
 
                  // get the image data object
-                 var image = backgroundTexture.getContext().getImageData(800, 380, 200, 175);
+                 var image = backgroundTexture.getContext().getImageData(820, 375, 180, 160);
                  // get the image data values 
                  var imageData = image.data,
                      length = imageData.length;
@@ -63,28 +63,33 @@ var Raleway = function (mesh) {
                  // after the manipulation, reset the data
                  image.data = imageData;
                  // and put the imagedata back to the canvas
-                 backgroundTexture.getContext().putImageData(image, 800, 380);
+                 backgroundTexture.getContext().putImageData(image, 820, 375);
 
                 backgroundTexture.update();
             }
         }
     }
 
-    function updateTemplate(mainText = "Enter", caption = "Caption this", fillColor = "#078ac3") {
+    function updateTemplate(mainText = "Lorem", caption = "Ipsum", fillColor = "#078ac3") {
         var backgroundTexture = texture;
 
         bgFillColor = fillColor;
-        /* backgroundTexture.getContext().fillStyle = fillColor;
+        backgroundTexture.getContext().fillStyle = fillColor;
         backgroundTexture.getContext().fill(bgRectangle);
-        backgroundTexture.update(); */
-
-        mainTagline = mainText;
-        backgroundTexture.drawText(mainText.toUpperCase(), 20, 430, "70px 'Archivo Black'", "white", null, true);
+        backgroundTexture.update();
 
         captionTagline = caption;
-        backgroundTexture.drawText(caption.toUpperCase(), 20, 460, "32px 'Archivo Narrow'", "white", null, true);
+        backgroundTexture.drawText(caption.toUpperCase(), 20, 360, "32px 'Roboto Condensed'", "white", null, true);
+
+        mainTagline = mainText;
+        backgroundTexture.drawText(mainText.toUpperCase(), 20, 430, "800 75px 'Raleway'", fillColor, null, true);
+        
+        mainTagline = mainText;
+        backgroundTexture.drawText(caption.toUpperCase(), 20, 500, "800 75px 'Raleway'", "white", null, true);
                 
-        backgroundTexture.drawText('This is a very long paragraph', 20, 490, "16px 'Archivo Narrow'", "white", null, true);
+        backgroundTexture.drawText('Lorem Ipsum is simply dummy text of the printing', 20, 565, "16px 'Roboto Condensed'", "white", null, true);        
+        backgroundTexture.drawText('and typesetting. Lorem Ipsum has been the industry\'s', 20, 580, "16px 'Roboto Condensed'", "white", null, true);              
+        backgroundTexture.drawText('text ever since the 1500s ', 20, 595, "16px 'Roboto Condensed'", "white", null, true);
 
         // rotate(outerCylinder);
     }
@@ -103,7 +108,7 @@ var Raleway = function (mesh) {
         backgroundTexture.getContext().fill(rectangle);
         backgroundTexture.update();
         
-        backgroundTexture.drawText(mainTagline, 20, 420, "70px 'Archivo Black'", "white", null, true);
+        backgroundTexture.drawText(mainTagline, 20, 420, "70px 'Roboto Condensed'", "white", null, true);
 
         backgroundTexture.drawText(captionTagline, 20, 450, "32px 'Archivo Narrow'", "white", null, true);
         

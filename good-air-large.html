@@ -22,7 +22,7 @@
     <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
     <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
     <script src="https://unpkg.com/merge-images"></script>
-    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow|Raleway|Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow|Raleway:400,800|Roboto+Condensed" rel="stylesheet">
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -65,6 +65,11 @@
         <br />
 
         <button class="waves-effect waves-light btn" onclick="download()">Download</button>
+
+        <br />
+        <br />
+
+        <button class="waves-effect waves-light btn" onclick="stopRotation()">Toggle Rotation</button>
     </div>
 
     <script src="/templates/raleway.js"></script>
@@ -75,6 +80,10 @@
         const canvas = document.getElementById("renderCanvas");
         const generateCanvas = document.getElementById("generateCanvas");
         const fileInput = document.getElementById('file-input');
+
+        function stopRotation() {
+            Configurator.stopRotation();
+        }
 
         function triggerUpload() {
             fileInput.click();

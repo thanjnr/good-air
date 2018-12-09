@@ -21,7 +21,7 @@ var ArchivoTemplate = function (mesh) {
         bgRectangle.rect(0, 200, 1200, 122);
 
         texture = backgroundTexture;
-        backgroundTexture = updateTemplate();
+        updateTemplate();
 
         var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
         dynamicMaterial.diffuseTexture = backgroundTexture;
@@ -117,6 +117,8 @@ var ArchivoTemplate = function (mesh) {
 
         captionTagline = caption;
         backgroundTexture.drawText(caption.toUpperCase(), 250, 300, "32px 'Archivo Narrow'", "white", null, true);
+
+        // rotate(outerCylinder);
     }
 
     function download(generateCanvas) {

@@ -67,9 +67,10 @@
         <button class="waves-effect waves-light btn" onclick="download()">Download</button>
     </div>
 
+    <script src="/templates/template.js"></script>
     <script src="can-configurator.js"></script>
     <script>
-        var outerCylinder, backgroundTexture, dynamicMaterial, scene, customLabel;
+        var outerCylinder, backgroundTexture, dynamicMaterial, scene, texture;
         const canvas = document.getElementById("renderCanvas");
         const generateCanvas = document.getElementById("generateCanvas");
         const fileInput = document.getElementById('file-input');
@@ -81,7 +82,7 @@
         function updateCanText() {
             var text = document.getElementById("textInput");
 
-            customLabel = Configurator.updateCustomLabel(text.value, customLabel);
+            Configurator.updateTemplate(text.value);
         }
 
         function updateCanCaption() {
@@ -89,7 +90,7 @@
             var caption = document.getElementById("captionInput");
             var fillColor = '#' + document.getElementById("picker").value;
 
-            customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel, fillColor);
+            Configurator.updateTemplate(text.value, caption.value, fillColor);
         }
 
         function setTextColor(picker) {
@@ -97,21 +98,21 @@
             var text = document.getElementById("textInput");
             var caption = document.getElementById("captionInput");
 
-            customLabel = Configurator.updateCustomCaption(text.value, caption.value, customLabel, fillColor);
+            Configurator.updateTemplate(text.value, caption.value, fillColor);
         }
 
         function download() {
-            Configurator.download(generateCanvas, customLabel);
+            Configurator.download(generateCanvas);
         }
 
         fileInput.addEventListener('change', (e) => {
-            customLabel = Configurator.addImageToCan(e.target.files[0], customLabel);
+            Configurator.addImageToTemplate(e.target.files[0]);
         });
 
         var scene = Configurator.init(canvas);
         var can = Configurator.createCan();
         var canLabel = Configurator.createCanLabel();
-        customLabel = Configurator.createCustomLabel(canLabel);
+        Configurator.selectTemplate(new ArchivoTemplate(canLabel));
 
         Configurator.render();
 

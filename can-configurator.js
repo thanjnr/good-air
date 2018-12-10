@@ -143,8 +143,8 @@
           template.addImage(image);
       }
 
-      function updateTemplate(mainText, caption, fillColor) {
-          template.updateTemplate(mainText, caption, fillColor);
+      function updateTemplate(top, mainText, caption, paragraph, fillColor) {
+          template.updateTemplate(top, mainText, caption, paragraph, fillColor);
       }
 
       function download(generateCanvas) {

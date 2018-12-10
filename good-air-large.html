@@ -43,17 +43,21 @@
         <canvas id="generateCanvas"></canvas>
     </div>
     <div class="side-bar">
-        <h3>start customising</h3>
+        <h3>start customising</h3>        
+        <input id="tag" placeholder="2018" type="text" onblur="updateCanText()" />
+
         <input id="textInput" placeholder="Enter some text" type="text" onblur="updateCanText()" />
         <!-- <button class="waves-effect waves-light btn" onclick="updateCanText()">Update text</button> -->
 
-        <input id="captionInput" placeholder="cation this" type="text" onblur="updateCanCaption()" />
+        <input id="captionInput" placeholder="cation this" type="text" onblur="updateCanText()" />
         <!-- <button class="waves-effect waves-light btn" onclick="updateCanCaption()">Update caption</button> -->
+        
+        <textarea id="paragraph"  onblur="updateCanText()"></textarea>
 
         <br />
         <br />
         <h3>background color:</h3>
-        <input id="picker" class="jscolor" value="078ac3" onchange="setTextColor()">
+        <input id="picker" class="jscolor" value="078ac3" onchange="updateCanText()">
 
         <br />
         <br />
@@ -90,25 +94,13 @@
         }
 
         function updateCanText() {
-            var text = document.getElementById("textInput");
-
-            Configurator.updateTemplate(text.value);
-        }
-
-        function updateCanCaption() {
+            var tag = document.getElementById("tag");
             var text = document.getElementById("textInput");
             var caption = document.getElementById("captionInput");
+            var paragraph = document.getElementById("paragraph");
             var fillColor = '#' + document.getElementById("picker").value;
-
-            Configurator.updateTemplate(text.value, caption.value, fillColor);
-        }
-
-        function setTextColor(picker) {
-            var fillColor = '#' + document.getElementById("picker").value;
-            var text = document.getElementById("textInput");
-            var caption = document.getElementById("captionInput");
-
-            Configurator.updateTemplate(text.value, caption.value, fillColor);
+            
+            Configurator.updateTemplate(tag.value, text.value, caption.value, paragraph.value, fillColor);
         }
 
         function download() {

@@ -122,9 +122,10 @@
         var scene = Configurator.init(canvas);
         var can = Configurator.createCan();
         var canLabel = Configurator.createCanLabel();
-        Configurator.selectTemplate(new Raleway(canLabel));
 
         Configurator.render();
+        
+        Configurator.selectTemplate(new Raleway(canLabel));
 
         // Resize
         window.addEventListener("resize", function () {

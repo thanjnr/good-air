@@ -59,7 +59,7 @@
       function rotate(object) {
           scene.registerBeforeRender(function () {
               if (!pauseRotation) {
-                object.rotation.y += 0.001;
+               // object.rotation.y += 0.001;
               }
           });
       }

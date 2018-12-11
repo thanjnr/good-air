@@ -1,5 +1,7 @@
 var Raleway = function (mesh) {
-    var mesh, texture, material, topTagline, mainTagline, captionTagline, paragraphText, bgFillColor = "#078ac3",
+    var mesh, texture, material, topTagline, mainTagline, captionTagline, 
+        paragraphText = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s`, 
+        bgFillColor = "#078ac3",
         bgRectangle;
 
     init(mesh);
@@ -66,37 +68,37 @@ var Raleway = function (mesh) {
             img.onload = function () {
                 //Add image to dynamic texture
                 backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
-/* 
-                // get the image data object
-                var image = backgroundTexture.getContext().getImageData(820, 375, 180, 160);
-                // get the image data values 
-                var imageData = image.data,
-                    length = imageData.length;
-                // set every fourth value to 50
-                for (var i = 3; i < length; i += 4) {
-                    imageData[i] = 50;
-                }
-                // after the manipulation, reset the data
-                image.data = imageData;
-                // and put the imagedata back to the canvas
-                backgroundTexture.getContext().putImageData(image, 820, 375); */
+                /* 
+                                // get the image data object
+                                var image = backgroundTexture.getContext().getImageData(820, 375, 180, 160);
+                                // get the image data values 
+                                var imageData = image.data,
+                                    length = imageData.length;
+                                // set every fourth value to 50
+                                for (var i = 3; i < length; i += 4) {
+                                    imageData[i] = 50;
+                                }
+                                // after the manipulation, reset the data
+                                image.data = imageData;
+                                // and put the imagedata back to the canvas
+                                backgroundTexture.getContext().putImageData(image, 820, 375); */
 
                 backgroundTexture.update();
             }
         }
     }
 
-    function updateTemplate(top="2018", mainText = "Lorem", caption = "Ipsum", paragraph = "", fillColor = "#078ac3") {
+    function updateTemplate(top = "2018", mainText = "Lorem", caption = "Ipsum", paragraph = paragraphText, fillColor = "#078ac3") {
         if (material) {
             texture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
             material.diffuseTexture = texture;
             material.opacityTexture = texture;
         }
-        
+
         var backgroundTexture = texture;
 
-        bgFillColor = fillColor;  
-        topTagline = top;      
+        bgFillColor = fillColor;
+        topTagline = top;
         captionTagline = caption;
         mainTagline = mainText;
         paragraphText = paragraph;
@@ -108,13 +110,32 @@ var Raleway = function (mesh) {
         backgroundTexture.drawText(topTagline.toUpperCase(), 20, 360, "32px 'Roboto Condensed'", "white", null, true);
         backgroundTexture.drawText(mainTagline.toUpperCase(), 20, 430, "800 75px 'Raleway'", bgFillColor, null, true);
         backgroundTexture.drawText(captionTagline.toUpperCase(), 20, 500, "800 75px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText(paragraphText, 20, 565, "16px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText('printing and typesetting. Lorem Ipsum', 20, 580, "16px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText('has been the industry\'s text ever', 20, 595, "16px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText('since the 1500s ', 20, 610, "16px 'Roboto Condensed'", "white", null, true);
+        wrapText(backgroundTexture, paragraph, 20, 565, 300, 15);
 
         backgroundTexture.update();
         // rotate(outerCylinder);
+    }
+
+    function wrapText(backgroundTexture, text, x, y, maxWidth, lineHeight) {
+        var words = text.split(' ');
+        var line = '';
+        backgroundTexture.drawText(line, x, y, "16px 'Roboto Condensed'", "white", null, true);
+
+        for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' ';
+            var metrics = backgroundTexture.getContext().measureText(testLine);
+            var testWidth = metrics.width;
+
+            if (testWidth > maxWidth) {
+                backgroundTexture.drawText(line, x, y, "16px 'Roboto Condensed'", "white", null, true);
+                line = words[n] + ' ';
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+
+        backgroundTexture.drawText(line, x, y, "16px 'Roboto Condensed'", "white", null, true);
     }
 
     function download(generateCanvas) {
@@ -129,10 +150,7 @@ var Raleway = function (mesh) {
         backgroundTexture.drawText(topTagline.toUpperCase(), 20, 360, "32px 'Roboto Condensed'", "white", null, true);
         backgroundTexture.drawText(mainTagline.toUpperCase(), 20, 430, "800 75px 'Raleway'", bgFillColor, null, true);
         backgroundTexture.drawText(captionTagline.toUpperCase(), 20, 500, "800 75px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText(paragraphText, 20, 565, "16px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText('printing and typesetting. Lorem Ipsum', 20, 580, "16px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText('has been the industry\'s text ever', 20, 595, "16px 'Roboto Condensed'", "white", null, true);
-        backgroundTexture.drawText('since the 1500s ', 20, 610, "16px 'Roboto Condensed'", "white", null, true);
+        wrapText(backgroundTexture, paragraphText, 20, 565, 300, 15);
 
         var img = new Image();
         img.src = logo;

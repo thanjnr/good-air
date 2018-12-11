@@ -46,29 +46,25 @@
         <h3>start customising</h3>        
         <input id="tag" placeholder="2018" type="text" onblur="updateCanText()" />
 
-        <input id="textInput" placeholder="Enter some text" type="text" onblur="updateCanText()" />
+        <input id="textInput" placeholder="LOREM" type="text" onblur="updateCanText()" />
         <!-- <button class="waves-effect waves-light btn" onclick="updateCanText()">Update text</button> -->
 
-        <input id="captionInput" placeholder="cation this" type="text" onblur="updateCanText()" />
+        <input id="captionInput" placeholder="IPSUM" type="text" onblur="updateCanText()" />
         <!-- <button class="waves-effect waves-light btn" onclick="updateCanCaption()">Update caption</button> -->
         
-        <textarea id="paragraph"  onblur="updateCanText()"></textarea>
+        <br /><br />
+        <textarea id="paragraph" style="height:150px" onblur="updateCanText()">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </textarea>
 
-        <br />
-        <br />
-        <h3>background color:</h3>
-        <input id="picker" class="jscolor" value="078ac3" onchange="updateCanText()">
+        <br /><br />
+        <input id="picker" class="jscolor" value="078ac3" onchange="updateCanText()" style="text-align: center">
 
-        <br />
-        <br />
-
-        <button class="waves-effect waves-light btn" onclick="triggerUpload()">Add logo</button>
+        <br /><br />
+        <button class="waves-effect waves-light btn" onclick="triggerUpload()" style="width: 100%">Add logo</button>
         <input style="display: none" type="file" accept="image/*" id="file-input">
 
-        <br />
-        <br />
-
-        <button class="waves-effect waves-light btn" onclick="download()">Download</button>
+        <br /><br />
+        <button class="waves-effect waves-light btn" onclick="download()" style="width: 100%">Download</button>
 
         <!-- <br />
         <br />

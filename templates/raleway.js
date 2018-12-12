@@ -1,8 +1,9 @@
 var Raleway = function (mesh) {
-    var mesh, texture, material, topTagline, mainTagline, captionTagline, 
-        paragraphText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`, 
+    var mesh, texture, material, topTagline, mainTagline, captionTagline,
+        paragraphText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
         bgFillColor = "#078ac3",
-        bgRectangle;
+        bgRectangle,
+        logo;
 
     init(mesh);
 
@@ -102,6 +103,15 @@ var Raleway = function (mesh) {
         captionTagline = caption;
         mainTagline = mainText;
         paragraphText = paragraph;
+
+        var img = new Image();
+        img.src = logo;
+
+        img.onload = function () {
+            //Add image to dynamic texture
+            backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
+            backgroundTexture.update();
+        }
 
         backgroundTexture.getContext().fillStyle = fillColor;
         backgroundTexture.getContext().fill(bgRectangle);

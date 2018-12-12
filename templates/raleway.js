@@ -64,9 +64,10 @@ var Raleway = function (mesh) {
         if (image !== null) {
             var img = new Image();
             img.src = URL.createObjectURL(image);
-            logo = URL.createObjectURL(image);
+            // logo = URL.createObjectURL(image);
 
             img.onload = function () {
+                logo = this;
                 //Add image to dynamic texture
                 backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
                 /* 
@@ -104,18 +105,12 @@ var Raleway = function (mesh) {
         mainTagline = mainText;
         paragraphText = paragraph;
 
-        var img = new Image();
-        img.src = logo;
-
-        img.onload = function () {
-            //Add image to dynamic texture
-            backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
-            backgroundTexture.update();
+        if (logo) {
+            backgroundTexture.getContext().drawImage(logo, 820, 375, 180, 160);
         }
 
         backgroundTexture.getContext().fillStyle = fillColor;
         backgroundTexture.getContext().fill(bgRectangle);
-        backgroundTexture.update();
 
         backgroundTexture.drawText(topTagline.toUpperCase(), 20, 360, "32px 'Roboto Condensed'", "white", null, true);
         backgroundTexture.drawText(mainTagline.toUpperCase(), 20, 430, "800 75px 'Raleway'", bgFillColor, null, true);

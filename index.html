@@ -1,209 +1,125 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <title>Babylon.js sample code</title>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <!-- Babylon.js -->
-        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
-        <script src="https://preview.babylonjs.com/cannon.js"></script>
-        <script src="https://preview.babylonjs.com/Oimo.js"></script>
-        <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
-        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
-        <script src="https://preview.babylonjs.com/babylon.js"></script>
-        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
-        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
-        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <title>GoodAir - Customise</title>
 
-        <style>
-            html, body {
-                overflow: hidden;
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
+    <!-- Babylon.js -->
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://unpkg.com/merge-images"></script>
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow|Raleway:400,800|Roboto+Condensed" rel="stylesheet">
 
-            #renderCanvas {
-                width: 100%;
-                height: 100%;
-                touch-action: none;
-            }
-        </style>
-    </head>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- color picker -->
+    <script src="jscolor.js"></script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8" />
+</head>
+
 <body>
-    <canvas id="renderCanvas"></canvas>
+    <canvas id="renderCanvas" class="configurator-container"></canvas>
+    <div style="display: none;">
+        <canvas id="generateCanvas"></canvas>
+    </div>
+    <div class="side-bar">
+        <h3>start customising</h3>        
+        <input id="tag" value="2018" type="text" onblur="updateCanText()" />
+
+        <input id="textInput" value="LOREM" type="text" onblur="updateCanText()" />
+        <!-- <button class="waves-effect waves-light btn" onclick="updateCanText()">Update text</button> -->
+
+        <input id="captionInput" value="IPSUM" type="text" onblur="updateCanText()" />
+        <!-- <button class="waves-effect waves-light btn" onclick="updateCanCaption()">Update caption</button> -->
+        
+        <br /><br />
+        <textarea id="paragraph" style="height:150px" onblur="updateCanText()">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </textarea>
+
+        <br /><br />
+        <input id="picker" class="jscolor" value="078ac3" onchange="updateCanText()" style="text-align: center">
+
+        <br /><br />
+        <button class="waves-effect waves-light btn" onclick="triggerUpload()" style="width: 100%">Add logo</button>
+        <input style="display: none" type="file" accept="image/*" id="file-input">
+
+        <br /><br />
+        <button class="waves-effect waves-light btn" onclick="download()" style="width: 100%">Download</button>
+
+        <!-- <br />
+        <br />
+
+        <button class="waves-effect waves-light btn" onclick="stopRotation()">Toggle Rotation</button> -->
+    </div>
+
+    <script src="/templates/raleway.js"></script>
+    <script src="/templates/archivo.js"></script>
+    <script src="can-configurator.js"></script>
     <script>
-        var canvas = document.getElementById("renderCanvas");
+        var outerCylinder, backgroundTexture, dynamicMaterial, scene, texture;
+        const canvas = document.getElementById("renderCanvas");
+        const generateCanvas = document.getElementById("generateCanvas");
+        const fileInput = document.getElementById('file-input');
 
-        var delayCreateScene = function () {
-        
-            engine.enableOfflineSupport = false;
-            
-            // This is really important to tell Babylon.js to use decomposeLerp and matrix interpolation
-            BABYLON.Animation.AllowMatricesInterpolation = true;
-        
-            var scene = new BABYLON.Scene(engine);
-        
-            var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 3, new BABYLON.Vector3(0, 1, 0), scene);
-            camera.attachControl(canvas, true);
-        
-            camera.lowerRadiusLimit = 2;
-            camera.upperRadiusLimit = 10;
-            camera.wheelDeltaPercentage = 0.01;
-        
-        	var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-        	light.intensity = 0.6;
-        	light.specular = BABYLON.Color3.Black();
-        
-            var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, -1.0), scene);
-            light2.position = new BABYLON.Vector3(0, 5, 5);
-        
-            // Shadows
-            var shadowGenerator = new BABYLON.ShadowGenerator(1024, light2);
-            shadowGenerator.useBlurExponentialShadowMap = true;
-            shadowGenerator.blurKernel = 32;
-        	
-            engine.displayLoadingUI();
-        
-        	BABYLON.SceneLoader.ImportMesh("", "./scenes/", "dummy3.babylon", scene, function (newMeshes, particleSystems, skeletons) {
-                var skeleton = skeletons[0];
-        
-                shadowGenerator.addShadowCaster(scene.meshes[0], true);
-                for (var index = 0; index < newMeshes.length; index++) {
-                    newMeshes[index].receiveShadows = false;;
-                }
-        
-                var helper = scene.createDefaultEnvironment({
-                    enableGroundShadow: true
-                });
-                helper.setMainColor(BABYLON.Color3.Gray());
-                helper.ground.position.y += 0.01;
-        
-                // ROBOT
-                skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
-                skeleton.animationPropertiesOverride.enableBlending = true;
-                skeleton.animationPropertiesOverride.blendingSpeed = 0.05;
-                skeleton.animationPropertiesOverride.loopMode = 1;
-            
-                var idleRange = skeleton.getAnimationRange("YBot_Idle");
-                var walkRange = skeleton.getAnimationRange("YBot_Walk");
-                var runRange = skeleton.getAnimationRange("YBot_Run");
-                var leftRange = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
-                var rightRange = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-                
-                // IDLE
-                if (idleRange) scene.beginAnimation(skeleton, idleRange.from, idleRange.to, true);
-        		       
-                // UI
-                var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-                var UiPanel = new BABYLON.GUI.StackPanel();
-                UiPanel.width = "220px";
-                UiPanel.fontSize = "14px";
-                UiPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                UiPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                advancedTexture.addControl(UiPanel);
-                // ..
-                var button = BABYLON.GUI.Button.CreateSimpleButton("but1", "Play Idle");
-                button.paddingTop = "10px";
-                button.width = "100px";
-                button.height = "50px";
-                button.color = "white";
-                button.background = "green";
-                button.onPointerDownObservable.add(()=> {
-                    if (idleRange) scene.beginAnimation(skeleton, idleRange.from, idleRange.to, true);
-                });
-                UiPanel.addControl(button);
-                // ..
-                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but2", "Play Walk");
-                button1.paddingTop = "10px";
-                button1.width = "100px";
-                button1.height = "50px";
-                button1.color = "white";
-                button1.background = "green";
-                button1.onPointerDownObservable.add(()=> {
-                    if (walkRange) scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
-                });
-                UiPanel.addControl(button1);
-                // ..
-                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but3", "Play Run");
-                button1.paddingTop = "10px";
-                button1.width = "100px";
-                button1.height = "50px";
-                button1.color = "white";
-                button1.background = "green";
-                button1.onPointerDownObservable.add(()=> {
-                    if (runRange) scene.beginAnimation(skeleton, runRange.from, runRange.to, true);
-                });
-                UiPanel.addControl(button1);
-                // ..
-                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but4", "Play Left");
-                button1.paddingTop = "10px";
-                button1.width = "100px";
-                button1.height = "50px";
-                button1.color = "white";
-                button1.background = "green";
-                button1.onPointerDownObservable.add(()=> {
-                    if (leftRange) scene.beginAnimation(skeleton, leftRange.from, leftRange.to, true);
-                });
-                UiPanel.addControl(button1);
-                // ..
-                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but5", "Play Right");
-                button1.paddingTop = "10px";
-                button1.width = "100px";
-                button1.height = "50px";
-                button1.color = "white";
-                button1.background = "green";
-                button1.onPointerDownObservable.add(()=> {
-                    if (rightRange) scene.beginAnimation(skeleton, rightRange.from, rightRange.to, true);
-                });
-                UiPanel.addControl(button1);
-                // ..
-                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but6", "Play Blend");
-                button1.paddingTop = "10px";
-                button1.width = "100px";
-                button1.height = "50px";
-                button1.color = "white";
-                button1.background = "green";
-                button1.onPointerDownObservable.add(()=> {
-                    if (walkRange && leftRange) {
-                        scene.stopAnimation(skeleton);
-                        var walkAnim = scene.beginWeightedAnimation(skeleton, walkRange.from, walkRange.to, 0.5, true);
-                        var leftAnim = scene.beginWeightedAnimation(skeleton, leftRange.from, leftRange.to, 0.5, true);
-        
-                        // Note: Sync Speed Ratio With Master Walk Animation
-                        walkAnim.syncWith(null);
-                        leftAnim.syncWith(walkAnim);
-                    }
-                });
-                UiPanel.addControl(button1);
-        
-                engine.hideLoadingUI();
-            });	
-        
-            return scene;
-        };
-        
-        
-        var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
-        var scene = delayCreateScene();
+        function stopRotation() {
+            Configurator.stopRotation();
+        }
 
-        engine.runRenderLoop(function () {
-            if (scene) {
-                scene.render();
-            }
+        function triggerUpload() {
+            fileInput.click();
+        }
+
+        function updateCanText() {
+            var tag = document.getElementById("tag");
+            var text = document.getElementById("textInput");
+            var caption = document.getElementById("captionInput");
+            var paragraph = document.getElementById("paragraph");
+            var fillColor = '#' + document.getElementById("picker").value;
+            
+            Configurator.updateTemplate(tag.value, text.value, caption.value, paragraph.value, fillColor);
+        }
+
+        function download() {
+            Configurator.download(generateCanvas);
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            Configurator.addImageToTemplate(e.target.files[0]);
         });
+
+        var scene = Configurator.init(canvas);
+        var can = Configurator.createCan();
+        var canLabel = Configurator.createCanLabel();
+
+        Configurator.render();
+        
+        Configurator.selectTemplate(new Raleway(canLabel));
 
         // Resize
         window.addEventListener("resize", function () {
-            engine.resize();
+            Configurator.resize();
         });
     </script>
 </body>
+
 </html>

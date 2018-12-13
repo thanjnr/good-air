@@ -44,8 +44,15 @@ var Raleway = function (mesh) {
         material = dynamicMaterial;
     }
 
+    function createNewTexture() {
+        if (material) {
+            texture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
+            material.diffuseTexture = texture;
+            material.opacityTexture = texture;
+        }
+    }
+
     function addImage(image) {
-        var backgroundTexture = texture;
         var img = new Image();
 
         if (image !== null) {
@@ -56,7 +63,7 @@ var Raleway = function (mesh) {
         img.onload = function () {
             logo = this;
             //Add image to dynamic texture
-            backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
+            // backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
             /* 
             // get the image data object
             var image = backgroundTexture.getContext().getImageData(820, 375, 180, 160);
@@ -72,16 +79,13 @@ var Raleway = function (mesh) {
             // and put the imagedata back to the canvas
             backgroundTexture.getContext().putImageData(image, 820, 375); */
 
-            backgroundTexture.update();
+            // backgroundTexture.update();
+            updateTemplate();
         }
     }
 
-    function updateTemplate(top = "2018", mainText = "Lorem", caption = "Ipsum", paragraph = paragraphText, fillColor = "#078ac3") {
-        if (material) {
-            texture = new BABYLON.DynamicTexture("dynamic texture", 1024, scene, true);
-            material.diffuseTexture = texture;
-            material.opacityTexture = texture;
-        }
+    function updateTemplate(top = "2018", mainText = "Lorem", caption = "Ipsum", paragraph = paragraphText, fillColor = "#078ac3") {        
+        createNewTexture();
 
         var backgroundTexture = texture;
 

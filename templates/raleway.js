@@ -24,6 +24,7 @@ var Raleway = function (mesh) {
 
         texture = backgroundTexture;
         updateTemplate();
+        addImage(null);
 
         var dynamicMaterial = new BABYLON.StandardMaterial('mat', scene);
         dynamicMaterial.diffuseTexture = backgroundTexture;
@@ -43,50 +44,35 @@ var Raleway = function (mesh) {
         material = dynamicMaterial;
     }
 
-    function resetMaterial() {
-        material = new BABYLON.StandardMaterial('mat', scene);
-        material.diffuseTexture = texture;
-        material.opacityTexture = texture;
-        // material.diffuseTexture.invertZ = true;
-        // material.diffuseTexture.vAng = 1;
-        // material.diffuseTexture.wAng = BABYLON.Tools.ToRadians(90)/backgroundTexture.uScale;
-        material.specularColor = new BABYLON.Color3(0, 0, 0);
-        material.clearColor = new BABYLON.Color4(1, 0, 0, 0);
-        material.backFaceCulling = false;
-
-        mesh = mesh.clone('outer');
-        mesh.material = material;
-    }
-
     function addImage(image) {
         var backgroundTexture = texture;
+        var img = new Image();
 
         if (image !== null) {
-            var img = new Image();
             img.src = URL.createObjectURL(image);
-            // logo = URL.createObjectURL(image);
-
-            img.onload = function () {
-                logo = this;
-                //Add image to dynamic texture
-                backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
-                /* 
-                                // get the image data object
-                                var image = backgroundTexture.getContext().getImageData(820, 375, 180, 160);
-                                // get the image data values 
-                                var imageData = image.data,
-                                    length = imageData.length;
-                                // set every fourth value to 50
-                                for (var i = 3; i < length; i += 4) {
-                                    imageData[i] = 50;
-                                }
-                                // after the manipulation, reset the data
-                                image.data = imageData;
-                                // and put the imagedata back to the canvas
-                                backgroundTexture.getContext().putImageData(image, 820, 375); */
-
-                backgroundTexture.update();
+        } else {
+            img.src = 'logo-placeholder-1.png';
+        }
+        img.onload = function () {
+            logo = this;
+            //Add image to dynamic texture
+            backgroundTexture.getContext().drawImage(this, 820, 375, 180, 160);
+            /* 
+            // get the image data object
+            var image = backgroundTexture.getContext().getImageData(820, 375, 180, 160);
+            // get the image data values 
+            var imageData = image.data,
+                length = imageData.length;
+            // set every fourth value to 50
+            for (var i = 3; i < length; i += 4) {
+                imageData[i] = 50;
             }
+            // after the manipulation, reset the data
+            image.data = imageData;
+            // and put the imagedata back to the canvas
+            backgroundTexture.getContext().putImageData(image, 820, 375); */
+
+            backgroundTexture.update();
         }
     }
 
@@ -150,66 +136,57 @@ var Raleway = function (mesh) {
 
         backgroundTexture.getContext().fillStyle = bgFillColor;
         backgroundTexture.getContext().fill(bgRectangle);
-        backgroundTexture.update();
 
         backgroundTexture.drawText(topTagline.toUpperCase(), 20, 360, "32px 'Roboto Condensed'", "white", null, true);
         backgroundTexture.drawText(mainTagline.toUpperCase(), 20, 430, "800 75px 'Raleway'", bgFillColor, null, true);
         backgroundTexture.drawText(captionTagline.toUpperCase(), 20, 500, "800 75px 'Roboto Condensed'", "white", null, true);
         wrapText(backgroundTexture, paragraphText, 20, 565, 300, 15);
 
-        var img = new Image();
-        img.src = logo;
-        img.onload = function () {
-            //Add image to dynamic texture            
-            backgroundTexture.getContext().drawImage(this, 640, 375, 135, 130);
-
-            /* // get the image data object
-            var image = backgroundTexture.getContext().getImageData(640, 375, 135, 130);
-            // get the image data values 
-            var imageData = image.data,
-                length = imageData.length;
-            // set every fourth value to 50
-            for (var i = 3; i < length; i += 4) {
-                imageData[i] = 50;
-            }
-            // after the manipulation, reset the data
-            image.data = imageData;
-            // and put the imagedata back to the canvas
-            backgroundTexture.getContext().putImageData(image, 640, 375); */
-
-            backgroundTexture.update();
-
-            tempImage.src = backgroundTexture.getContext().canvas.toDataURL("image/png");
-
-            tempImage.onload = function () {
-                //Creating a link if the browser have the download attribute on the a tag, to automatically start download generated image.
-                if ("download" in document.createElement("a")) {
-                    var a = window.document.createElement("a");
-                    mergeImages(['/good_air_can_large.png', tempImage.src])
-                        .then((b64) => {
-                            console.log(b64);
-                            a.href = b64
-                            a.setAttribute("download", "dynamictexture.png");
-
-                            window.document.body.appendChild(a);
-
-                            a.addEventListener("click", function () {
-                                a.parentElement.removeChild(a);
-                            });
-                            a.click();
-                        });
-
-                    //Or opening a new tab with the image if it is not possible to automatically start download.
-                } else {
-                    var newWindow = window.open("");
-                    var img = newWindow.document.createElement("img");
-                    img.src = imageurl;
-                    newWindow.document.body.appendChild(img);
-                }
-            }
-
+        if (logo) {
+            backgroundTexture.getContext().drawImage(logo, 640, 375, 135, 130);
         }
-        /// rotate canvas context
-        // tempCtx.rotate(0.5 * Math.PI); /// 90deg clock-wise
+        /* // get the image data object
+                    var image = backgroundTexture.getContext().getImageData(640, 375, 135, 130);
+                    // get the image data values 
+                    var imageData = image.data,
+                        length = imageData.length;
+                    // set every fourth value to 50
+                    for (var i = 3; i < length; i += 4) {
+                        imageData[i] = 50;
+                    }
+                    // after the manipulation, reset the data
+                    image.data = imageData;
+                    // and put the imagedata back to the canvas
+                    backgroundTexture.getContext().putImageData(image, 640, 375); */
+
+        backgroundTexture.update();
+
+        tempImage.src = backgroundTexture.getContext().canvas.toDataURL("image/png");
+
+        tempImage.onload = function () {
+            //Creating a link if the browser have the download attribute on the a tag, to automatically start download generated image.
+            if ("download" in document.createElement("a")) {
+                var a = window.document.createElement("a");
+                mergeImages(['/good_air_can_large.png', tempImage.src])
+                    .then((b64) => {
+                        a.href = b64
+                        a.setAttribute("download", "dynamictexture.png");
+
+                        window.document.body.appendChild(a);
+
+                        a.addEventListener("click", function () {
+                            a.parentElement.removeChild(a);
+                        });
+                        a.click();
+                    });
+
+                //Or opening a new tab with the image if it is not possible to automatically start download.
+            } else {
+                var newWindow = window.open("");
+                var img = newWindow.document.createElement("img");
+                img.src = imageurl;
+                newWindow.document.body.appendChild(img);
+            }
+        }
     }
 };
